@@ -1,0 +1,19 @@
+{
+	"name": "ludeeus/integration_blueprint",
+	"image": "archlinux:latest",
+    "privileged": true,
+	"postCreateCommand": "scripts/setup.sh",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"keksiqc.idx-monospace-theme",
+				"tamasfe.even-better-toml",
+				"rust-lang.rust-analyzer"
+			],
+			"settings": {
+
+			}
+		}
+	},
+	"features": {}
+}
