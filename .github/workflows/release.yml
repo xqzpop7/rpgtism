@@ -1,15 +1,45 @@
 name: Release
 
+on:
+  push:
+    tags:
+      - "v*"
+
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   release:
-    name: Release for ${{ matrix.os }}
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+        run: |
+          gh release create "$tag" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${tag#v}"
+  builds:
+    name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
+    needs: release
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        include:
+            - name: Linux 64x
+              os: ubuntu-latest
+              filename: ${{ github.event.repository.name }}-linux-64x
+              extension: ""
+            - name: MacOS 64x
+              os: macOS-latest
+              filename: ${{ github.event.repository.name }}-macos-64x
+              extension: ""
+            - name: Windows 64x
+              os: windows-latest
+              filename: ${{ github.event.repository.name }}-windows-64x
+              extension: .exe
 
     steps:
     - uses: actions/checkout@v4
@@ -23,3 +53,12 @@ jobs:
       run: sudo apt-get install g++ pkg-config libx11-dev libasound2-dev libudev-dev libxkbcommon-x11-0 libwayland-dev libxkbcommon-dev
     - name: Build
       run: cargo build --release --verbose
+    - name: Zip
+      run: zip -r ${{ matrix.filename }}.zip ./assets/ ./target/release/${{ github.event.repository.name }}${{ matrix.extension }}
+    - name: Upload
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.ref_name }}
+      run: | 
+        gh release upload "$tag" \
+            ${{ matrix.filename }}.zip
