@@ -54,7 +54,7 @@ jobs:
     - name: Build
       run: cargo build --release --verbose
     - name: Zip
-      run: zip -r ${{ matrix.filename }}.zip ./assets ./target/release/${{ github.event.repository.name }}${{ matrix.extension }}
+      run: zip -r ${{ matrix.filename }}.zip ./assets && zip -j ${{ matrix.filename }}.zip ./target/release/${{ github.event.repository.name }}${{ matrix.extension }}
     - name: Upload
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
