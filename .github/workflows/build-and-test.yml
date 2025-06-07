@@ -4,12 +4,14 @@ on:
   push:
     branches: [ "master" ]
     paths-ignore:
-      - './github/*'
+      - './github/**'
+      - './github/**/**'
       - './.gitignore'
   pull_request:
     branches: [ "master" ]
     paths-ignore:
-      - './github/*'
+      - './github/**'
+      - './github/**/**'
       - './.gitignore'
 
 env:
