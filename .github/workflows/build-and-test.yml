@@ -3,8 +3,14 @@ name: Build & Test
 on:
   push:
     branches: [ "master" ]
+    paths-ignore:
+      - './github/**'
+      - './.gitignore'
   pull_request:
     branches: [ "master" ]
+    paths-ignore:
+      - './github/**'
+      - './.gitignore'
 
 env:
   CARGO_TERM_COLOR: always
