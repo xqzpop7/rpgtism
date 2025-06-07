@@ -53,8 +53,12 @@ jobs:
       run: sudo apt-get install g++ pkg-config libx11-dev libasound2-dev libudev-dev libxkbcommon-x11-0 libwayland-dev libxkbcommon-dev
     - name: Build
       run: cargo build --release --verbose
-    - name: Zip
+    - name: Zip Linux & MacOS
+      if: matrix.os == 'ubuntu-latest' || matrix.os == 'macOS-latest'
       run: zip -r ${{ matrix.filename }}.zip ./assets && zip -j ${{ matrix.filename }}.zip ./target/release/${{ github.event.repository.name }}${{ matrix.extension }}
+    - name: Zip Windows
+      if: matrix.os == 'windows-latest'
+      run: Compress-Archive ./assets, ./target/release/${{ github.event.repository.name }}${{ matrix.extension }} ${{ matrix.filename }}.zip
     - name: Upload
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
